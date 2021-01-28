@@ -1,0 +1,15 @@
+messages:
+  prefix: "&c[&6AfkRoom&c]"
+  nopermissions: "%pf% &cYou have no permission to perform this command"
+  incorrect_args: "%pf% &cIncorrect Args"
+  subcommand_not_found: "%pf% subcommand not found."
+  sendMessageToServer: true
+  message_to_server: "%pf% &c%player% &4has gone afk."
+  sendMessageToPlayer: true
+  message_to_player: "%pf% You have gone afk. Move to be teleported back"
+  afkroom_set: "%pf% &6Afk Room Location has been set."
+  teleported_to_afk_room_command: "%pf% &eYou have been teleported to the Afk Room."
+  teleported_to_spawn: "%pf% &6You have been teleported to spawn. You have been afk for &e%time%&6."
+  teleported_to_last_location: "%pf% &eYou have been teleported to your last known location. You were afk for &6%time%&e."
+  frozen_server: "%pf% &c Afking has been frozen"
+  de_frozen_server: "%pf% &c Afking has been unfrozen"

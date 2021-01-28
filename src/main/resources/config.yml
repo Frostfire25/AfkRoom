@@ -1,0 +1,34 @@
+#
+# Afk Room
+# Xanarchy#0001
+# github.com/frostfire25
+#
+
+# (room)
+# Afk-Room Teleportation Coords.
+# /afk setroom to set the room teleport location
+# World that the room is in MUST be different than default_world
+room:
+  x: 1
+  y: 1
+  z: 1
+  world: "world"
+  yaw: 1
+  pitch: 1
+
+# (spawn_at_spawn)
+# true - spawns the player in the spawn of (default_world)
+# false - spawns the player at their last known location
+spawn_at_spawn: true
+#Must be different than room.world
+default_world: "world"
+
+# (afk_time)
+# Time where if a player doesn't move within (afk_time) secconds
+# They will be set afk.
+afk_time: 10
+
+# (afk_packet_hault)
+# true - Players who are in the afk-room-world and are afk will not recieve certian packets, aimed to boost performance.
+# false - Players who are in the afk-room-world and are afk will recieve all NMS packets not effected by other projects.
+afk_packet_hault: true

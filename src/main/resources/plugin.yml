@@ -1,0 +1,7 @@
+name: AfkRoom
+version: ${project.version}
+main: co.antiqu.afkroom.AfkRoom
+authors: [AlexElg]
+depend: [ProtocolLib]
+commands:
+  afkroom:
