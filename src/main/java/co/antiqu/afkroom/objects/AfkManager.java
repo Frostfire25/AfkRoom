@@ -1,6 +1,8 @@
 package co.antiqu.afkroom.objects;
 
 import co.antiqu.afkroom.AfkRoom;
+import co.antiqu.afkroom.events.APlayerLeaveAfkEvent;
+import co.antiqu.afkroom.events.APlayerSetAfkEvent;
 import co.antiqu.afkroom.objects.wrapper.APlayer;
 import co.antiqu.afkroom.tasks.Freezable;
 import co.antiqu.afkroom.tasks.RepeatingTask;
@@ -46,7 +48,6 @@ public class AfkManager extends RepeatingTask implements Freezable {
 
     @EventHandler
     public void onMove(PlayerMoveEvent evt) {
-        System.out.println("here");
         if(isFrozen())
             return;
         if (evt.getFrom().getBlockX() == evt.getTo().getBlockX() && evt.getFrom().getBlockZ() == evt.getTo().getBlockZ() && evt.getFrom().getBlockY() == evt.getTo().getBlockY()) {
@@ -64,23 +65,11 @@ public class AfkManager extends RepeatingTask implements Freezable {
         }
 
         if(aPlayer.isAfk() /*|| player.getWorld().getName().equalsIgnoreCase(i.getAfkRoomManager().getLocation().getWorld().getName())*/) {
-            long mili = aPlayer.getAfkSince();
-            aPlayer.setAfk(false);
-            Location loc = null;
-            if(MSG.spawnAtSpawn) {
-               aPlayer.getPlayer().sendMessage(MSG.TELEPORTED_TO_SPAWN.replaceAll("%time%", (TimeUtil.formatPlayTime(System.currentTimeMillis()-mili))));
-               loc = i.getAfkRoomManager().getWorld().getSpawnLocation();
-            } else {
-                aPlayer.getPlayer().sendMessage(MSG.TELEPORTED_TO_LAST_LOCATION.replaceAll("%time%", (TimeUtil.formatPlayTime(System.currentTimeMillis()-mili))));
-                loc = aPlayer.getLastKnownLocation();
-            }
-            aPlayer.getPlayer().teleport(loc);
-            return;
 
+            setUnAfk(aPlayer, true);
         } else {
 
             aPlayer.setLastKnownLocation(player.getLocation());
-            afkingMap.remove(aPlayer);
             afkingMap.put(aPlayer,System.currentTimeMillis());
 
         }
@@ -91,10 +80,6 @@ public class AfkManager extends RepeatingTask implements Freezable {
         Player player = evt.getPlayer();
         APlayer aPlayer = i.getAPlayerManager().getAPlayer(player);
 
-        if(aPlayer == null) {
-            System.out.println("[AfkRoom] issue finding APlayer, in onMove");
-            return;
-        }
         afkingMap.remove(aPlayer);
     }
 
@@ -119,16 +104,42 @@ public class AfkManager extends RepeatingTask implements Freezable {
         });
     }
 
-    public void setAfk(APlayer n) {
-        getScheduler().scheduleSyncDelayedTask(i, () -> {
+    public void setUnAfk(APlayer n, boolean event) {
+            long mili = n.getAfkSince();
 
+            //Event to determine if player should be afk
+
+            if(event) {
+                APlayerLeaveAfkEvent aPlayerLeaveAfkEvent = new APlayerLeaveAfkEvent(n, System.currentTimeMillis(), n.getLastKnownLocation(), (System.currentTimeMillis() - mili));
+                aPlayerLeaveAfkEvent.run();
+                if (aPlayerLeaveAfkEvent.isCancelled())
+                    return;
+            }
+
+            //Sets the player to Un Afk
+
+            n.setAfk(false);
+            Location loc = null;
+            if(MSG.spawnAtSpawn) {
+                n.getPlayer().sendMessage(MSG.TELEPORTED_TO_SPAWN.replaceAll("%time%", (TimeUtil.formatPlayTime(System.currentTimeMillis()-mili))));
+                loc = i.getAfkRoomManager().getWorld().getSpawnLocation();
+            } else {
+                n.getPlayer().sendMessage(MSG.TELEPORTED_TO_LAST_LOCATION.replaceAll("%time%", (TimeUtil.formatPlayTime(System.currentTimeMillis()-mili))));
+                loc = n.getLastKnownLocation();
+            }
+            n.getPlayer().teleport(loc);
+            return;
+    }
+
+    public void setAfk(APlayer n) {
             if(n.isAfk())
                 return;
 
-            //Making the player go afk
-            //System.out.println("removing player added ");
-            remove.add(n);
-            n.setAfk(true);
+            //Event to call to see if it is canclled
+            APlayerSetAfkEvent aPlayerSetAfkEvent = new APlayerSetAfkEvent(n,System.currentTimeMillis(), n.getBukkitPlayer().getLocation());
+            aPlayerSetAfkEvent.run();
+            if(aPlayerSetAfkEvent.isCancelled())
+                return;
 
             Player player = n.getPlayer();
 
@@ -150,7 +161,12 @@ public class AfkManager extends RepeatingTask implements Freezable {
                     m.sendMessage(MSG.MESSAGE_TO_SERVER.replaceAll("%player%", player.getName()));
                 }
             }
-        });
+
+            Bukkit.getScheduler().runTaskLater(i,() -> {
+                //Making the player go afk
+                remove.add(n);
+                n.setAfk(true);
+            }, 2L);
     }
 
     @Override

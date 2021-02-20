@@ -32,3 +32,9 @@ afk_time: 10
 # true - Players who are in the afk-room-world and are afk will not recieve certian packets, aimed to boost performance.
 # false - Players who are in the afk-room-world and are afk will recieve all NMS packets not effected by other projects.
 afk_packet_hault: true
+
+# (un_afk_players_on_disable)
+# true - When the server stop players will be set to unAfk and returned to their determined destination
+# false - When the server stops players will not be set to unAfk and will be left in the AFK room
+# !NOTE! At the moment Afk Players data does not stay so it is recommended to keep (un_afk_players_on_disable) to 'true'
+un_afk_players_on_disable: true

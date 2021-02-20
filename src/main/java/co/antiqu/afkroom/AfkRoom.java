@@ -12,6 +12,7 @@ import co.antiqu.afkroom.util.configws.WSClass;
 import co.antiqu.afkroom.util.configws.WSM;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class AfkRoom extends JavaPlugin implements WSClass {
@@ -26,7 +27,7 @@ public final class AfkRoom extends JavaPlugin implements WSClass {
     private Config lang;
 
     @Getter
-    private MSG MSG;
+    private MSG msg;
 
     @Getter
     private IProtocolLib iProtocolLib;
@@ -63,7 +64,15 @@ public final class AfkRoom extends JavaPlugin implements WSClass {
 
     @Override
     public void onDisable() {
+        if(MSG.unAfkPlayersOnDisable) {
 
+            //Need to set everyone afk to teleport back to their old locations
+            Bukkit.getOnlinePlayers().stream().map(n -> aPlayerManager.getAPlayer(n)).forEach(n -> {
+                if (n.isAfk()) {
+                    afkManager.setUnAfk(n, false);
+                }
+            });
+        }
     }
 
     private void config() {
@@ -71,7 +80,7 @@ public final class AfkRoom extends JavaPlugin implements WSClass {
         saveDefaultConfig();
         lang = new Config(this,"lang.yml");
         lang.saveDefaultConfig(this);
-        MSG = new MSG(this);
+        msg = new MSG(this);
     }
 
     private void listeners() {

@@ -31,6 +31,8 @@ public class MSG {
 
     public static boolean enablePacketSaving;
 
+    public static boolean unAfkPlayersOnDisable;
+
     private static final FileConfiguration config = AfkRoom.getInstance().getLang().getConfig();
     private static final FileConfiguration configCF = AfkRoom.getInstance().getConfig();
 
@@ -42,6 +44,8 @@ public class MSG {
 
         spawnAtSpawn = configCF.getBoolean("spawn_at_spawn");
         enablePacketSaving = configCF.getBoolean("afk_packet_hault");
+
+        unAfkPlayersOnDisable = configCF.getBoolean("un_afk_players_on_disable");
 
         //System.out.println(config.getString("messages.prefix"));
 

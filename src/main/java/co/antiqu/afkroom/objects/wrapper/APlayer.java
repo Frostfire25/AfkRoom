@@ -8,33 +8,33 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 public class APlayer {
 
-    @Getter @Setter
     private Location lastKnownLocation;
 
-    @Getter
     private Player player;
 
-    @Getter
     private UUID uuid;
 
-    @Getter
     public boolean afk;
 
-    @Getter
     private long afkSince;
 
     public APlayer(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
         this.lastKnownLocation = player.getLocation();
-        this.afk = false;
-        this.afkSince = -1;
+        setTimeStamp(false, -1);
     }
 
     public void setAfk(boolean val) {
-        if(val) {
+        setTimeStamp(val, val ? System.currentTimeMillis() : -1);
+    }
+
+    public void setTimeStamp(boolean value, long timestamp) {
+        if(value) {
             afk = true;
             afkSince = System.currentTimeMillis();
         } else {

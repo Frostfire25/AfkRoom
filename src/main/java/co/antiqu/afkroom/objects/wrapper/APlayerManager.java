@@ -58,8 +58,7 @@ public class APlayerManager extends Engine {
     }
 
     public void removePlayer(APlayer player) {
-        if(aPlayers.contains(player))
-            aPlayers.add(player);
+        aPlayers.remove(player);
     }
 
     public APlayer getAPlayer(Player player) {
