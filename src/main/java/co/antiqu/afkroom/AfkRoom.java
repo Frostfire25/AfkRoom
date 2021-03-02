@@ -15,6 +15,8 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
+
 public final class AfkRoom extends JavaPlugin implements WSClass {
 
     @Getter
@@ -67,7 +69,7 @@ public final class AfkRoom extends JavaPlugin implements WSClass {
         if(MSG.unAfkPlayersOnDisable) {
 
             //Need to set everyone afk to teleport back to their old locations
-            Bukkit.getOnlinePlayers().stream().map(n -> aPlayerManager.getAPlayer(n)).forEach(n -> {
+            Bukkit.getOnlinePlayers().stream().map(n -> aPlayerManager.getAPlayer(n)).filter(Objects::nonNull).forEach(n -> {
                 if (n.isAfk()) {
                     afkManager.setUnAfk(n, false);
                 }
